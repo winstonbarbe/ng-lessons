@@ -1,3 +1,4 @@
+import { ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { PersonsService } from './persons.service';
 
@@ -14,5 +15,7 @@ export class PersonsComponent implements OnInit {
   ngOnInit() {
     this.personsList = this.prsService.persons;
   }
+  onRemovePerson(personName: string) {
+    this.prsService.removePerson(personName);
+  }
 }
- 
