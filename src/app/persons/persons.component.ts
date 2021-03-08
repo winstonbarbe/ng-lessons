@@ -1,5 +1,6 @@
 import { ThrowStmt } from '@angular/compiler';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { PersonsService } from './persons.service';
 
 @Component({
@@ -7,15 +8,23 @@ import { PersonsService } from './persons.service';
   templateUrl: './persons.component.html'
 })
 
-export class PersonsComponent implements OnInit {
+export class PersonsComponent implements OnInit, OnDestroy {
   personsList: string[];
-  constructor(private prsService: PersonsService) {
-    // this.personsList= prsService.persons;
-  }
+  private personListSubs: Subscription;
+
+  constructor(private prsService: PersonsService) {}
+
   ngOnInit() {
-    this.personsList = this.prsService.persons;
+    this.personListSubs = this.prsService.personsChanged.subscribe(persons => {
+      this.personsList = persons;
+    });
+    this.prsService.fetchPersons();
   }
   onRemovePerson(personName: string) {
     this.prsService.removePerson(personName);
+  }
+
+  ngOnDestroy () {
+    this.personListSubs.unsubscribe();
   }
 }
